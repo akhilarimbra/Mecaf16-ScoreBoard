@@ -20,7 +20,7 @@
             // Handler for .ready() called.
             window.setTimeout(function () {
                 location.href = "/index.php";
-            }, 5000);
+            }, 50000);
         });
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
@@ -34,8 +34,8 @@
     <![endif]-->
 </head>
 <body>
-<div class="se-pre-con"></div>
 <div class="container">
+    <div class="se-pre-con"></div>
     <div class="row">
         <div class="col s12">
             <h3 class="align-middle">RESULTS</h3>

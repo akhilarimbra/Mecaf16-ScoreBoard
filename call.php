@@ -19,9 +19,10 @@
         $(document).ready(function () {
             // Handler for .ready() called.
             window.setTimeout(function () {
-                location.href = "/result.php";
+                location.href = "/index.php";
             }, 5000);
         });
+    </script>
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
     <link rel="stylesheet" href="/css/style.css">
@@ -34,8 +35,8 @@
     <![endif]-->
 </head>
 <body>
-<div class="se-pre-con"></div>
 <div class="container">
+    <div class="se-pre-con"></div>
     <div class="row">
         <div class="col s12">
             <h3 class="align-middle">EVENT DETAILS</h3>
@@ -49,40 +50,82 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr class="red blink_me">
-                    <th>Mohiniaattam</th>                
-                    <th>Final Call</th>
-                    <th>59 Mins 24 Secs</th>
-                    <th>---</th>
-                </tr>
+                <?php
+                include 'dashboard/config.php';
+                $sql = "SELECT * FROM `event` ORDER BY `order` DESC LIMIT 14";
+                $result = $connection->query($sql);
+                $currentTime = localtime(time(), true)['tm_hour'].":".localtime(time(), true)['tm_min'].":".
+                    localtime(time(), true)['tm_sec'];
 
-                <tr class="green">
-                    <th>Mohiniaattam</th>
-                    <th>First Call</th>
-                    <th>59 Mins 24 Secs</th>
-                    <th>---</th>
-                </tr>
+                if ($result->num_rows > 0) {
+                    // output data of each row
+                    $i = 1;
+                    while($row = $result->fetch_assoc()) {
 
+                        switch ($row['eventcall']) {
+                            case 'First Call':
+                                echo "<tr class='green'>";
+                                break;
+                            case 'Second Call':
+                                echo "<tr class='orange'>";
+                                break;
+                            case 'Final Call':
+                                echo "<tr class='red blink_me'>";
+                                break;
+                            case 'Closed':
+                                echo "<tr class='black'>";
+                                break;
+                        } ?>
+                            <th><?php echo $row['event'] ?></th>
+                            <th><?php echo $row['eventcall'] ?></th>
+                        <?php if ($row['eventcall'] != 'Closed') { ?>
+                            <div id="hms"><?php echo $row['time'] ?></div>
+                            <th id="countdown"></th>
+                        <?php } else { ?>
+                            <th>---</th>
+                        <?php } ?>
+                            <th><?php echo date("g:i a", strtotime($row['time'])) ?></th>
+                        </tr>
+                        <?php $i++; ?>
+                    <?php }
+                } else {
+                    echo "0 results";
+                }
 
-                <tr class="orange">
-                    <th>Mohiniaattam</th>
-                    <th>Second Call</th>
-                    <th>59 Mins 24 Secs</th>
-                    <th>---</th>
-                </tr>
-
-
-                <tr class="black">
-                    <th>Mohiniaattam</th>
-                    <th>Closed</th>
-                    <th>---</th>
-                    <th>12:20 A.M</th>
-                </tr>
+                $connection->close();
+                ?>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    var startTime = document.getElementById('hms').innerHTML;
+    var pieces = startTime.split(":");
+    var time = new Date();
+    var currentTime = new Date();
+    time.setHours(pieces[0] - currentTime.getHours());
+    time.setMinutes(pieces[1] - currentTime.getMinutes());
+    time.setSeconds(pieces[2] - currentTime.getSeconds());
+    var timed = new Date(time.valueOf());
+    var newtime2 = timed.toTimeString().split(" ")[0];
+    document.getElementById('countdown').innerHTML=newtime2;
+    function count() {
+        var startTime = document.getElementById('countdown').innerHTML;
+        var pieces = startTime.split(":");
+        var time = new Date();
+        time.setHours(pieces[0]);
+        time.setMinutes(pieces[1]);
+        time.setSeconds(pieces[2]);
+
+        var timedif = new Date(time.valueOf() - 1000);
+        var newtime = timedif.toTimeString().split(" ")[0];
+        document.getElementById('countdown').innerHTML=newtime;
+        setTimeout(count, 1000);
+
+    }
+    count();
+</script>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>

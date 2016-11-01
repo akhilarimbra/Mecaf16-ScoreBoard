@@ -1,3 +1,4 @@
+<?php include '/dashboard/config.php';?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -34,8 +35,8 @@
     <![endif]-->
   </head>
   <body>
-    <div class="se-pre-con"></div>
     <div class="container-fluid">
+        <div class="se-pre-con"></div>
         <div class="row">
             <div class="col s2">
                 <img src="/img/red.png" alt="" class="img-responsive"> <br> <br>
@@ -55,49 +56,55 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <th class="black">Flock Dance</th>
-                        <th class="red">5</th>
-                        <th class="blue">3</th>
-                        <th class="green">2</th>
-                        <th class="orange">1</th>
-                    </tr>
-                    <tr>
-                        <th class="black">Flock Dance</th>
-                        <th class="red">5</th>
-                        <th class="blue">3</th>
-                        <th class="green">2</th>
-                        <th class="orange">1</th>
-                    </tr>
-                    <tr>
-                        <th class="black">Flock Dance</th>
-                        <th class="red">5</th>
-                        <th class="blue">3</th>
-                        <th class="green">2</th>
-                        <th class="orange">1</th>
-                    </tr>
-                    <tr>
-                        <th class="black">Flock Dance</th>
-                        <th class="red">5</th>
-                        <th class="blue">3</th>
-                        <th class="green">2</th>
-                        <th class="orange">1</th>
-                    </tr>
-                    <tr>
-                        <th class="black">Flock Dance</th>
-                        <th class="red">5</th>
-                        <th class="blue">3</th>
-                        <th class="green">2</th>
-                        <th class="orange">1</th>
-                    </tr>
+                        <?php
+                        include 'dashboard/config.php';
+                        $sql = "SELECT * FROM `score` LIMIT 14";
+                        $result = $connection->query($sql);
+
+                        if ($result->num_rows > 0) {
+                            // output data of each row
+                            while($row = $result->fetch_assoc()) { ?>
+                                <tr>
+                                    <th class="black"><?php echo $row['event']; ?></th>
+                                    <th class="red"><?php echo $row['red']; ?></th>
+                                    <th class="blue"><?php echo $row['blue']; ?></th>
+                                    <th class="green"><?php echo $row['green']; ?></th>
+                                    <th class="orange"><?php echo $row['yellow']; ?></th>
+                                </tr>
+                            <?php }
+                        } else {
+                            echo "0 results";
+                        }
+
+                        $sql = "SELECT * FROM `score`";
+                        $result = $connection->query($sql);
+
+                        $scorered = 0;
+                        $scoreblue = 0;
+                        $scoregreen = 0;
+                        $scoreyellow = 0;
+
+                        if ($result->num_rows > 0) {
+                            // output data of each row
+                            while($row = $result->fetch_assoc()) {
+                                $scorered += $row['red'];
+                                $scoreblue += $row['blue'];
+                                $scoregreen += $row['green'];
+                                $scoreyellow += $row['yellow'];
+                            }
+                        } else {
+                            echo "0 results";
+                        }
+                        $connection->close();
+                        ?>
                     </tbody>
                 </table>
             </div>
             <div class="col s1">
-                <a class="btn-floating btn-large waves-effect waves-light equal-width red">234</a>
-                <a class="btn-floating btn-large waves-effect waves-light equal-width blue">234</a>
-                <a class="btn-floating btn-large waves-effect waves-light equal-width green">234</a>
-                <a class="btn-floating btn-large waves-effect waves-light equal-width yellow">234</a>
+                <a class="btn-floating btn-large waves-effect waves-light equal-width red"><?php echo $scorered ?></a>
+                <a class="btn-floating btn-large waves-effect waves-light equal-width blue"><?php echo $scoreblue ?></a>
+                <a class="btn-floating btn-large waves-effect waves-light equal-width green"><?php echo $scoregreen ?></a>
+                <a class="btn-floating btn-large waves-effect waves-light equal-width yellow"><?php echo $scoreyellow ?></a>
             </div>
         </div>
     </div>
